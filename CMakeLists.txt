@@ -12,3 +12,4 @@ add_executable(parallel_computing_project main.c)
 target_link_libraries(parallel_computing_project PUBLIC MPI::MPI_CXX)
 
 FILE(COPY resources/dataset_1.txt DESTINATION "${CMAKE_BINARY_DIR}/resources")
+FILE(COPY resources/dataset_2.txt DESTINATION "${CMAKE_BINARY_DIR}/resources")
