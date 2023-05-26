@@ -17,7 +17,7 @@ struct jaccard_comparison {
 };
 
 int scan_amount_od_datasets(int *result_var) {
-    printf("Enter amount of datasets:");
+    printf("\nEnter amount of datasets:\n");
     if (scanf(" %d", result_var) != 1 || *result_var <= 0) {
         perror("Error in amount of datasets scanning (not int or negative)");
         return 1;
@@ -35,7 +35,7 @@ int *create_dataset_lengths(int amount_of_datasets) {
 }
 
 struct jaccard_comparison *create_jaccard_comparison_result(int amount_of_datasets) {
-    return malloc(sizeof(struct jaccard_comparison) * amount_of_datasets * (amount_of_datasets - 1) / 2);
+    return malloc(sizeof(struct jaccard_comparison) * (amount_of_datasets * (amount_of_datasets - 1) / 2));
 }
 
 int get_cmd_name(char *result_var) {
@@ -48,8 +48,8 @@ int get_cmd_name(char *result_var) {
 }
 
 void get_dataset_path(char *result_var, int dataset_index) {
-    printf("Enter path to the %d dataset related to the current directory:", dataset_index);
-    scanf(" %s", result_var);
+    printf("\nEnter path to the %d dataset related to the current directory:\n", dataset_index);
+    scanf("%s", result_var);
 }
 
 FILE *open_dataset_file(char *cmd, char *file_path) {
@@ -62,7 +62,7 @@ FILE *open_dataset_file(char *cmd, char *file_path) {
 }
 
 int get_amount_of_values_in_dataset(int *result_var) {
-    printf("Enter amount of values in dataset:");
+    printf("\nEnter amount of values in dataset:\n");
     if (scanf("%d", result_var) != 1 || *result_var <= 0) {
         perror("There was a problem in reading amount of values in dataset (not an integer or negative)");
         return 1;
@@ -211,8 +211,8 @@ int main(int argc, char *argv[]) {
 
         if (rank_id == 0) {
             gather_table = calloc(processes_size * MAX_VALUE_IN_DATASET, sizeof(int));
-            send_data = dataset_matrix[0];
-            dataset_length = dataset_lengths[0];
+            send_data = dataset_matrix[dataset_number];
+            dataset_length = dataset_lengths[dataset_number];
         }
 
         MPI_Bcast(&dataset_length, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -250,11 +250,34 @@ int main(int argc, char *argv[]) {
         if (rank_id == 0) {
             for (int i = 0; i < MAX_VALUE_IN_DATASET; i++) {
                 for (int j = 0; j < processes_size; j++) {
-                    result_table[0][i] += gather_table[i + j * MAX_VALUE_IN_DATASET];
+                    result_table[dataset_number][i] += gather_table[i + j * MAX_VALUE_IN_DATASET];
                 }
             }
+        }
+    }
 
-//            for (int i = 0; )
+    if (rank_id == 0) {
+        int jaccard_idx = 0;
+        for (int i = 0; i < amount_of_datasets; i++) {
+            for (int j = i + 1; j < amount_of_datasets; j++) {
+                jaccard_result[jaccard_idx].start = i;
+                jaccard_result[jaccard_idx].finish = j;
+
+                int common_summary = 0;
+                for (int current_pos = 0; current_pos < MAX_VALUE_IN_DATASET; current_pos++) {
+                    common_summary += result_table[i][current_pos] > result_table[j][current_pos] ? result_table[j][current_pos] : result_table[i][current_pos];
+                }
+
+                jaccard_result[jaccard_idx].coefficient = (double) common_summary / (dataset_lengths[i] + dataset_lengths[j] - common_summary);
+                jaccard_idx++;
+
+
+                printf("---------------");
+            }
+        }
+
+        for (int i = 0; i < amount_of_datasets * (amount_of_datasets - 1) / 2; i++) {
+            printf("\nStart: %d, Finish: %d -- Coeff: %lf", jaccard_result[i].start, jaccard_result[i].finish, jaccard_result[i].coefficient);
         }
     }
 
