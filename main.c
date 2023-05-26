@@ -270,9 +270,6 @@ int main(int argc, char *argv[]) {
 
                 jaccard_result[jaccard_idx].coefficient = (double) common_summary / (dataset_lengths[i] + dataset_lengths[j] - common_summary);
                 jaccard_idx++;
-
-
-                printf("---------------");
             }
         }
 
