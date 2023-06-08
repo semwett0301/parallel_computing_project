@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
+#include <sys/times.h>
 
 
 const int MAX_LENGTH_OF_FILE_NAME = 200;
@@ -74,7 +74,7 @@ int get_amount_of_values_in_dataset(int *result_var) {
     return 0;
 }
 
-char* concat(char *s1, char *s2) {
+char *concat(char *s1, char *s2) {
 
     size_t len1 = strlen(s1);
     size_t len2 = strlen(s2);
@@ -166,7 +166,6 @@ int fill_the_datasets(int **dataset_matrix, int *dataset_lengths, int amount_of_
 
         int amount_of_values_in_dataset = atoi(argv[3 + current_dataset_index * 2]);
 
-        printf("\n%d\n", amount_of_values_in_dataset);
 //        get_amount_of_values_in_dataset(&amount_of_values_in_dataset);
 
         dataset_lengths[current_dataset_index] = amount_of_values_in_dataset;
@@ -204,8 +203,8 @@ int main(int argc, char *argv[]) {
     int amount_of_datasets;
     int *send_data;
 
-    time_t start, finish;
-    time(&start);
+//    struct tms begin, end;
+//    times(&begin);
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_id);
@@ -258,8 +257,6 @@ int main(int argc, char *argv[]) {
 
         int received_data[divided_size];
         MPI_Scatter(send_data, divided_size, MPI_INT, received_data, divided_size, MPI_INT, 0, MPI_COMM_WORLD);
-        MPI_Barrier(MPI_COMM_WORLD);
-
 
         int final_count[MAX_VALUE_IN_DATASET];
 
@@ -275,7 +272,6 @@ int main(int argc, char *argv[]) {
 
         MPI_Gather(final_count, MAX_VALUE_IN_DATASET, MPI_INT, gather_table, MAX_VALUE_IN_DATASET, MPI_INT, 0,
                    MPI_COMM_WORLD);
-        MPI_Barrier(MPI_COMM_WORLD);
 
         if (rank_id == 0) {
             for (int i = 0; i < MAX_VALUE_IN_DATASET; i++) {
@@ -310,12 +306,12 @@ int main(int argc, char *argv[]) {
             printf("\nStart: %d, Finish: %d -- Coeff: %lf", jaccard_result[i].start, jaccard_result[i].finish,
                    jaccard_result[i].coefficient);
         }
-        time(&finish);
-        printf("\nElapsed time: %f seconds\n", difftime(finish, start));
     }
 
     MPI_Finalize();
 
+//    times(&end);
+//    printf("\nElapsed time (ms) x main: %f\n", (float) (end.tms_utime - begin.tms_utime) * 1000);
 
     return 0;
 }
