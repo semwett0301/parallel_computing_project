@@ -74,6 +74,23 @@ int get_amount_of_values_in_dataset(int *result_var) {
     return 0;
 }
 
+char* concat(char *s1, char *s2) {
+
+    size_t len1 = strlen(s1);
+    size_t len2 = strlen(s2);
+
+    char *result = malloc(len1 + len2 + 1);
+
+    if (!result) {
+        fprintf(stderr, "malloc() failed: insufficient memory!\n");
+        return NULL;
+    }
+
+    memcpy(result, s1, len1);
+    memcpy(result + len1, s2, len2 + 1);
+
+    return result;
+}
 
 char **str_split(char *a_str, const char a_delim) {
     char **result;
@@ -117,6 +134,7 @@ char **str_split(char *a_str, const char a_delim) {
 int transfer_buffer_to_int_array(char *buffer, int amount_of_values_in_dataset, int *result_var) {
     char **current_value_str = str_split(buffer, DIVIDE_CHAR);
 
+//    printf("\n%s %s %s\n", current_value_str[0], current_value_str[1], current_value_str[2]);
 
     for (int i = 0; i < amount_of_values_in_dataset; i++) {
         assert(current_value_str[i] != NULL);
@@ -134,19 +152,21 @@ int transfer_buffer_to_int_array(char *buffer, int amount_of_values_in_dataset, 
 int fill_the_datasets(int **dataset_matrix, int *dataset_lengths, int amount_of_datasets, char *argv[]) {
     for (int current_dataset_index = 0; current_dataset_index < amount_of_datasets; current_dataset_index++) {
         char cmd[MAX_LENGTH_OF_FILE_NAME];
-//        if (get_cmd_name(cmd) == 1) {
-//            return 1;
-//        }
+        if (get_cmd_name(cmd) == 1) {
+            return 1;
+        }
 
-        char* new_dataset_path = argv[2 + current_dataset_index * 2];
+        char *new_dataset_path = argv[2 + current_dataset_index * 2];
 //        get_dataset_path(new_dataset_path, current_dataset_index + 1);
 
-        FILE *current_dataset_file = open_dataset_file(cmd, new_dataset_path);
+        FILE *current_dataset_file = fopen(concat(cmd, new_dataset_path), "r");
         if (current_dataset_file == NULL) {
             return 1;
         }
 
         int amount_of_values_in_dataset = atoi(argv[3 + current_dataset_index * 2]);
+
+        printf("\n%d\n", amount_of_values_in_dataset);
 //        get_amount_of_values_in_dataset(&amount_of_values_in_dataset);
 
         dataset_lengths[current_dataset_index] = amount_of_values_in_dataset;
@@ -155,7 +175,7 @@ int fill_the_datasets(int **dataset_matrix, int *dataset_lengths, int amount_of_
         int buffer_length =
                 (int) sizeof(char) * amount_of_values_in_dataset * (MAX_LENGTH_OF_DATASET_VALUE_LENGTH + 1);
         char *buffer = malloc(buffer_length);
-        fscanf(current_dataset_file, "%s", buffer);
+        fread(buffer, sizeof(char), buffer_length, current_dataset_file);
         fclose(current_dataset_file);
 
         if (transfer_buffer_to_int_array(buffer, amount_of_values_in_dataset, dataset_matrix[current_dataset_index]) ==
@@ -176,7 +196,7 @@ int main(int argc, char *argv[]) {
     int dataset_length;
     int **dataset_matrix;
     int *dataset_lengths;
-    struct jaccard_comparison* jaccard_result;
+    struct jaccard_comparison *jaccard_result;
 
     int **result_table;
     int *gather_table;
@@ -275,16 +295,20 @@ int main(int argc, char *argv[]) {
 
                 int common_summary = 0;
                 for (int current_pos = 0; current_pos < MAX_VALUE_IN_DATASET; current_pos++) {
-                    common_summary += result_table[i][current_pos] > result_table[j][current_pos] ? result_table[j][current_pos] : result_table[i][current_pos];
+                    common_summary +=
+                            result_table[i][current_pos] > result_table[j][current_pos] ? result_table[j][current_pos]
+                                                                                        : result_table[i][current_pos];
                 }
 
-                jaccard_result[jaccard_idx].coefficient = (double) common_summary / (dataset_lengths[i] + dataset_lengths[j] - common_summary);
+                jaccard_result[jaccard_idx].coefficient =
+                        (double) common_summary / (dataset_lengths[i] + dataset_lengths[j] - common_summary);
                 jaccard_idx++;
             }
         }
 
         for (int i = 0; i < amount_of_datasets * (amount_of_datasets - 1) / 2; i++) {
-            printf("\nStart: %d, Finish: %d -- Coeff: %lf", jaccard_result[i].start, jaccard_result[i].finish, jaccard_result[i].coefficient);
+            printf("\nStart: %d, Finish: %d -- Coeff: %lf", jaccard_result[i].start, jaccard_result[i].finish,
+                   jaccard_result[i].coefficient);
         }
         time(&finish);
         printf("\nElapsed time: %f seconds\n", difftime(finish, start));
