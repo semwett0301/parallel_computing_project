@@ -3,6 +3,10 @@
 #include <mpi.h>
 #include <unistd.h>
 #include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+
 
 const int MAX_LENGTH_OF_FILE_NAME = 200;
 const int MAX_LENGTH_OF_DATASET_VALUE_LENGTH = 3;
@@ -53,7 +57,7 @@ void get_dataset_path(char *result_var, int dataset_index) {
 }
 
 FILE *open_dataset_file(char *cmd, char *file_path) {
-    FILE *current_dataset_file = fopen(strcat(cmd, file_path), "r");
+    FILE *current_dataset_file = fopen(file_path, "r");
     if (current_dataset_file == NULL) {
         perror(strcat("Error: could not open file ", file_path));
     }
@@ -127,23 +131,23 @@ int transfer_buffer_to_int_array(char *buffer, int amount_of_values_in_dataset, 
     return 0;
 }
 
-int fill_the_datasets(int **dataset_matrix, int *dataset_lengths, int amount_of_datasets) {
+int fill_the_datasets(int **dataset_matrix, int *dataset_lengths, int amount_of_datasets, char *argv[]) {
     for (int current_dataset_index = 0; current_dataset_index < amount_of_datasets; current_dataset_index++) {
         char cmd[MAX_LENGTH_OF_FILE_NAME];
-        if (get_cmd_name(cmd) == 1) {
-            return 1;
-        }
+//        if (get_cmd_name(cmd) == 1) {
+//            return 1;
+//        }
 
-        char new_dataset_path[MAX_LENGTH_OF_FILE_NAME];
-        get_dataset_path(new_dataset_path, current_dataset_index + 1);
+        char* new_dataset_path = argv[2 + current_dataset_index * 2];
+//        get_dataset_path(new_dataset_path, current_dataset_index + 1);
 
         FILE *current_dataset_file = open_dataset_file(cmd, new_dataset_path);
         if (current_dataset_file == NULL) {
             return 1;
         }
 
-        int amount_of_values_in_dataset;
-        get_amount_of_values_in_dataset(&amount_of_values_in_dataset);
+        int amount_of_values_in_dataset = atoi(argv[3 + current_dataset_index * 2]);
+//        get_amount_of_values_in_dataset(&amount_of_values_in_dataset);
 
         dataset_lengths[current_dataset_index] = amount_of_values_in_dataset;
         dataset_matrix[current_dataset_index] = malloc(sizeof(int) * amount_of_values_in_dataset);
@@ -180,14 +184,19 @@ int main(int argc, char *argv[]) {
     int amount_of_datasets;
     int *send_data;
 
+    time_t start, finish;
+    time(&start);
+
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_id);
     MPI_Comm_size(MPI_COMM_WORLD, &processes_size);
 
     if (rank_id == 0) {
-        if (scan_amount_od_datasets(&amount_of_datasets) == 1) {
-            return 1;
-        }
+//        if (scan_amount_od_datasets(&amount_of_datasets) == 1) {
+//            return 1;
+//        }
+
+        amount_of_datasets = atoi(argv[1]);
 
         dataset_matrix = create_dataset_matrix(amount_of_datasets);
         dataset_lengths = create_dataset_lengths(amount_of_datasets);
@@ -199,7 +208,7 @@ int main(int argc, char *argv[]) {
             result_table[i] = calloc(MAX_VALUE_IN_DATASET, sizeof(int));
         }
 
-        if (fill_the_datasets(dataset_matrix, dataset_lengths, amount_of_datasets) == 1) {
+        if (fill_the_datasets(dataset_matrix, dataset_lengths, amount_of_datasets, argv) == 1) {
             return 1;
         }
     }
@@ -246,6 +255,7 @@ int main(int argc, char *argv[]) {
 
         MPI_Gather(final_count, MAX_VALUE_IN_DATASET, MPI_INT, gather_table, MAX_VALUE_IN_DATASET, MPI_INT, 0,
                    MPI_COMM_WORLD);
+        MPI_Barrier(MPI_COMM_WORLD);
 
         if (rank_id == 0) {
             for (int i = 0; i < MAX_VALUE_IN_DATASET; i++) {
@@ -276,9 +286,12 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < amount_of_datasets * (amount_of_datasets - 1) / 2; i++) {
             printf("\nStart: %d, Finish: %d -- Coeff: %lf", jaccard_result[i].start, jaccard_result[i].finish, jaccard_result[i].coefficient);
         }
+        time(&finish);
+        printf("\nElapsed time: %f seconds\n", difftime(finish, start));
     }
 
     MPI_Finalize();
+
 
     return 0;
 }
