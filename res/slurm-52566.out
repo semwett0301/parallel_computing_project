@@ -1,0 +1,99 @@
+Amount of processes: 8
+Amount of values: 1000000
+7932
+Start: 0, Finish: 1 -- Coeff: 0.986956
+Elapsed time (ms): 894
+-----------------------------------------------------------------------------
+Amount of values: 900000
+2770
+Start: 0, Finish: 1 -- Coeff: 0.988607
+Elapsed time (ms): 821
+-----------------------------------------------------------------------------
+Amount of values: 800000
+3932
+Start: 0, Finish: 1 -- Coeff: 0.987755
+Elapsed time (ms): 762
+-----------------------------------------------------------------------------
+Amount of values: 700000
+3917
+Start: 0, Finish: 1 -- Coeff: 0.987185
+Elapsed time (ms): 715
+-----------------------------------------------------------------------------
+Amount of values: 600000
+5749
+Start: 0, Finish: 1 -- Coeff: 0.984796
+Elapsed time (ms): 761
+-----------------------------------------------------------------------------
+Amount of values: 500000
+4465
+Start: 0, Finish: 1 -- Coeff: 0.985537
+Elapsed time (ms): 733
+-----------------------------------------------------------------------------
+Amount of values: 400000
+3364
+Start: 0, Finish: 1 -- Coeff: 0.985176
+Elapsed time (ms): 699
+-----------------------------------------------------------------------------
+Amount of values: 300000
+4530
+Start: 0, Finish: 1 -- Coeff: 0.975556
+Elapsed time (ms): 679
+-----------------------------------------------------------------------------
+Amount of values: 200000
+5648
+Start: 0, Finish: 1 -- Coeff: 0.976646
+Elapsed time (ms): 646
+-----------------------------------------------------------------------------
+Amount of values: 100000
+9376
+Start: 0, Finish: 1 -- Coeff: 0.968291
+Elapsed time (ms): 575
+-----------------------------------------------------------------------------
+79653065541732173039
+Start: 0, Finish: 1 -- Coeff: 0.964000
+Start: 0, Finish: 2 -- Coeff: 0.966278
+Start: 0, Finish: 3 -- Coeff: 0.964000
+Start: 0, Finish: 4 -- Coeff: 0.964849
+Start: 0, Finish: 5 -- Coeff: 0.962554
+Start: 0, Finish: 6 -- Coeff: 0.966162
+Start: 0, Finish: 7 -- Coeff: 0.960323
+Start: 0, Finish: 8 -- Coeff: 0.966278
+Start: 0, Finish: 9 -- Coeff: 0.965177
+Start: 1, Finish: 2 -- Coeff: 0.968872
+Start: 1, Finish: 3 -- Coeff: 1.000000
+Start: 1, Finish: 4 -- Coeff: 0.968872
+Start: 1, Finish: 5 -- Coeff: 0.965525
+Start: 1, Finish: 6 -- Coeff: 0.966356
+Start: 1, Finish: 7 -- Coeff: 0.962150
+Start: 1, Finish: 8 -- Coeff: 0.968872
+Start: 1, Finish: 9 -- Coeff: 0.966046
+Start: 2, Finish: 3 -- Coeff: 0.968872
+Start: 2, Finish: 4 -- Coeff: 0.970754
+Start: 2, Finish: 5 -- Coeff: 0.967691
+Start: 2, Finish: 6 -- Coeff: 0.966916
+Start: 2, Finish: 7 -- Coeff: 0.968000
+Start: 2, Finish: 8 -- Coeff: 1.000000
+Start: 2, Finish: 9 -- Coeff: 0.967265
+Start: 3, Finish: 4 -- Coeff: 0.968872
+Start: 3, Finish: 5 -- Coeff: 0.965525
+Start: 3, Finish: 6 -- Coeff: 0.966356
+Start: 3, Finish: 7 -- Coeff: 0.962150
+Start: 3, Finish: 8 -- Coeff: 0.968872
+Start: 3, Finish: 9 -- Coeff: 0.966046
+Start: 4, Finish: 5 -- Coeff: 0.967497
+Start: 4, Finish: 6 -- Coeff: 0.966549
+Start: 4, Finish: 7 -- Coeff: 0.966742
+Start: 4, Finish: 8 -- Coeff: 0.970754
+Start: 4, Finish: 9 -- Coeff: 0.966510
+Start: 5, Finish: 6 -- Coeff: 0.964579
+Start: 5, Finish: 7 -- Coeff: 0.966008
+Start: 5, Finish: 8 -- Coeff: 0.967691
+Start: 5, Finish: 9 -- Coeff: 0.964154
+Start: 6, Finish: 7 -- Coeff: 0.966317
+Start: 6, Finish: 8 -- Coeff: 0.966916
+Start: 6, Finish: 9 -- Coeff: 0.964907
+Start: 7, Finish: 8 -- Coeff: 0.968000
+Start: 7, Finish: 9 -- Coeff: 0.965699
+Start: 8, Finish: 9 -- Coeff: 0.967265
+Elapsed time (ms): 824
+-----------------------------------------------------------------------------

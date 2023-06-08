@@ -4,7 +4,7 @@ mpicc -o main main.c -std=c99 -D_SVID_SOURCE
 echo "Amount of processes: $1"
 
 
-for (( k = 10; k > 9; k-- )); do
+for (( k = 10; k > 0; k-- )); do
   S=$(date +%s%N)
   num=$((100000 * $k))
   echo "Amount of values: $num"
